@@ -1,0 +1,437 @@
+/* ================= ROOT ================= */
+.inst-layout {
+  min-height: 100vh;
+  display: flex;
+  background: #f6f8fc;
+  font-family: "Inter", system-ui, sans-serif;
+  color: #111827;
+}
+
+/* ================= SIDEBAR ================= */
+.inst-sidebar {
+  width: 240px;
+  background: #ffffff;
+  padding: 28px 22px;
+  border-right: 1px solid #e5e7eb;
+}
+
+.inst-sidebar h2 {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 26px;
+}
+
+.inst-sidebar button {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 15px;
+  border-radius: 14px;
+  cursor: pointer;
+  color: #374151;
+  transition: all 0.2s ease;
+}
+
+.inst-sidebar button:hover {
+  background: #ede9fe;
+  color: #4f46e5;
+}
+
+/* ===== ACTIVE TAB (PURE BLUE) ===== */
+.inst-sidebar button.active {
+  background: linear-gradient(135deg, #6d5dfc, #8b7cff);
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 10px 22px rgba(109, 93, 252, 0.35);
+}
+
+/* ================= MAIN ================= */
+.inst-main {
+  flex: 1;
+  padding: 32px 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.inst-main h1 {
+  font-size: 26px;
+  font-weight: 800;
+  align-self: flex-start;
+  margin-bottom: 28px;
+}
+
+/* ================= CARD ================= */
+.card {
+  width: 100%;
+  max-width: 720px;
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 30px;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.06);
+  overflow: visible;
+}
+
+.card h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+/* ================= FORM ================= */
+.card label {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.card input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.card input:disabled {
+  background: #f3f4f6;
+}
+
+/* ================= PROFILE CATEGORY DROPDOWN ================= */
+.category-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.category-input {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #ffffff;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.category-input.disabled {
+  background: #f3f4f6;
+  cursor: not-allowed;
+}
+
+.category-input .arrow {
+  font-size: 12px;
+  opacity: 0.6;
+}
+
+/* dropdown panel */
+.category-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 100%;
+  max-height: 220px;
+  overflow-y: auto;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.12);
+  z-index: 50;
+  padding: 6px 0;
+}
+
+/* each option */
+.category-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.category-option:hover {
+  background: #f5f7ff;
+}
+
+.category-option input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #6d5dfc;
+  pointer-events: none;
+}
+
+.category-option span {
+  user-select: none;
+}
+
+/* ================= CARD ACTIONS ================= */
+.card-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 24px;
+}
+
+/* ================= BUTTON SYSTEM ================= */
+button {
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 9px 20px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+#ed{
+  margin:5px;
+}
+
+/* PRIMARY (Save / Add / Default) */
+button:not(.logout):not(.danger):not(.edit-btn) {
+  background: linear-gradient(135deg, #6d5dfc, #8b7cff);
+  color: #ffffff;
+}
+
+button:not(.logout):not(.danger):not(.edit-btn):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(109, 93, 252, 0.35);
+}
+
+/* EDIT */
+.edit-btn {
+  background: #eef2ff;
+  color: #4f46e5;
+  border: 1px solid #c7d2fe;
+}
+
+.edit-btn:hover {
+  background: #e0e7ff;
+}
+
+/* DELETE */
+button.danger {
+  background: #ffffff;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+button.danger:hover {
+  background: #fee2e2;
+}
+
+/* LOGOUT */
+.logout {
+  background: #ffffff;
+  color: #dc2626;
+  border: 1px solid #e5e7eb;
+}
+
+.logout:hover {
+  background: #fee2e2;
+}
+
+/* ================= COURSES / STUDENTS ROW ================= */
+.student-row {
+  display: grid;
+  grid-template-columns: 1.4fr 2fr auto auto;
+  align-items: center;
+  gap: 14px;
+  background: #f9fafb;
+  padding: 14px 18px;
+  border-radius: 14px;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.student-row:hover {
+  background: #f3f4ff;
+}
+
+.student-row .clickable {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.student-row button {
+  min-width: 90px;
+}
+
+/* ================= MISC ================= */
+.hint {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 6px;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ================= LECTURE SELECT ================= */
+.card select {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  font-size: 14px;
+  margin-bottom: 20px;
+  cursor: pointer;
+  background: #ffffff;
+}
+
+/* ================= LECTURE LIST ================= */
+.lecture-row {
+  background: #f9fafb;
+  border-radius: 18px;
+  padding: 18px 20px;
+  margin-bottom: 16px;
+  transition: background 0.2s ease;
+}
+
+.lecture-row:hover {
+  background: #f3f4ff;
+}
+
+/* top info row */
+.lecture-top {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+  font-size: 14px;
+}
+
+.lecture-title {
+  font-weight: 600;
+}
+
+.lecture-order {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* video status */
+.video-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+}
+
+.video-status.uploaded {
+  color: #16a34a;
+}
+
+.video-status.missing {
+  color: #dc2626;
+}
+
+/* ================= LECTURE ACTION ROW ================= */
+.lecture-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* file input clean look */
+.lecture-actions input[type="file"] {
+  font-size: 13px;
+  background: #ffffff;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  padding: 6px 12px;
+  max-width: 220px;
+}
+
+/* upload button */
+.upload-btn {
+  background: linear-gradient(135deg, #6d5dfc, #8b7cff);
+  color: #ffffff;
+  border-radius: 999px;
+  padding: 9px 18px;
+  font-weight: 600;
+}
+
+.upload-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(109, 93, 252, 0.35);
+}
+
+/* ================= EDIT MODE ================= */
+.lecture-edit {
+  display: grid;
+  grid-template-columns: 2fr 1fr auto;
+  gap: 12px;
+}
+
+.lecture-edit input {
+  margin-bottom: 0;
+}
+
+/* ================= ADD LECTURE ================= */
+.add-lecture {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.add-lecture h3 {
+  margin-bottom: 14px;
+}
+
+/* ================= EMPTY STATE ================= */
+.empty-text {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 14px;
+}
+
+.student-table {
+  margin-top: 16px;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.student-header,
+.student-row {
+  display: grid;
+  grid-template-columns: 1.2fr 2fr 3fr 1fr;
+  gap: 16px;
+  padding: 14px 18px;
+  align-items: center;
+}
+
+.student-header {
+  background: #f3f4f6;
+  font-weight: 700;
+  color: #374151;
+}
+
+.student-row {
+  background: #ffffff;
+  border-top: 1px solid #e5e7eb;
+  font-size: 14px;
+}
+
+.student-row:hover {
+  background: #f9fafb;
+}
+
+.student-row .score {
+  font-weight: 700;
+  color: #16a34a;
+}
