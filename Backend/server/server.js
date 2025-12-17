@@ -12,10 +12,10 @@ const fetch1 = require("node-fetch");
 let app = express();
 app.use(cors());
 app.use(express.json());
-
 app.use("/upload", express.static(path.join(__dirname, "upload")));
 
-const secretKey = "mysecretkey123";
+const secretKey = process.env.JWT_SECRET;
+
 
 const storage = multer.diskStorage({
   destination: "upload/videos",
@@ -26,12 +26,8 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // DB CONNECTION
-let con = new Client({
-  host: "localhost",
-  user: "postgres",
-  port: 5432,
-  password: "divi",
-  database: "LMS",
+const con = new Client({
+  connectionString: process.env.DATABASE_URL,
 });
 
 async function generateQuiz(lectureTitle) {
@@ -212,7 +208,7 @@ app.get("/categories", async (req, res) => {
 
     const data = result.rows.map((r) => ({
       category: r.category,
-      photo: `http://localhost:3030/upload/${r.photo}`,
+      photo: `${process.env.BASE_URL}/upload/${r.photo}`,
     }));
 
     res.json(data);
@@ -234,7 +230,7 @@ app.get("/courses/:category", async (req, res) => {
 
     const data = result.rows.map((r) => ({
       course: r.course,
-      photo: `http://localhost:3030/upload/${r.photo}`,
+      photo: `${process.env.BASE_URL}/upload/${r.photo}`,
     }));
 
     res.json(data);
@@ -678,7 +674,7 @@ app.post(
   async (req, res) => {
     const { lecture_id } = req.body;
 
-    const url = `http://localhost:3030/upload/videos/${req.file.filename}`;
+    const url = `${process.env.BASE_URL}/upload/videos/${req.file.filename}`;
 
     await con.query("UPDATE lectures SET video_url=$1 WHERE id=$2", [
       url,
@@ -833,5 +829,5 @@ app.get("/verify", (req, res) => {
 });
 
 app.listen(3030, () => {
-  console.log("🚀 Server running at http://localhost:3030");
+  console.log("🚀 🚀 Server running on port ${PORT}");
 });
