@@ -1,0 +1,214 @@
+/*GLOBAL RESET*/
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont;
+  background:
+    radial-gradient(circle at 20% 10%, #ede9ff, transparent 40%),
+    radial-gradient(circle at 80% 20%, #dbeafe, transparent 40%),
+    linear-gradient(180deg, #f8f7ff, #eef2ff);
+  color: #1f2937;
+}
+
+/* PAGE LAYOUT*/
+.select-category-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 110px 20px 60px;
+}
+
+/*TITLE*/
+.select-category-page h2 {
+  font-size: 34px;
+  font-weight: 800;
+  margin-bottom: 48px;
+  color: #0f172a;
+  letter-spacing: -0.8px;
+  text-align: center;
+}
+
+/* GRID*/
+.category-grid {
+  width: 100%;
+  max-width: 1200px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 32px;
+}
+
+/*CATEGORY CARD (GLASS)*/
+.category-box {
+  position: relative;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(16px);
+  border-radius: 22px;
+  padding: 22px;
+  cursor: pointer;
+  text-align: center;
+
+  border: 1px solid rgba(0, 0, 0, 0.06);
+
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.08),
+    0 40px 80px rgba(124, 77, 255, 0.15);
+
+  transition:
+    transform 0.35s cubic-bezier(.21,.61,.35,1),
+    box-shadow 0.35s ease,
+    border-color 0.35s ease;
+  overflow: hidden;
+}
+
+/* Neon gradient edge */
+.category-box::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(124, 77, 255, 0.7),
+    rgba(59, 130, 246, 0.4),
+    transparent 60%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+/* Glow orb */
+.category-box::after {
+  content: "";
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  top: -60px;
+  right: -60px;
+  background: radial-gradient(circle, rgba(124,77,255,0.35), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+/*IMAGE*/
+.category-box img {
+  width: 100%;
+  height: 170px;
+  object-fit: cover;
+  border-radius: 16px;
+  margin-bottom: 18px;
+  user-select: none;
+  pointer-events: none;
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* CATEGORY TEXT*/
+.category-box span {
+  display: block;
+  font-size: 17px;
+  font-weight: 700;
+  color: #1e1e2f;
+  letter-spacing: -0.3px;
+}
+
+/*HOVER */
+.category-box:hover {
+  transform: translateY(-10px) scale(1.03);
+  border-color: rgba(124, 77, 255, 0.55);
+  box-shadow:
+    0 25px 50px rgba(124, 77, 255, 0.35),
+    0 12px 20px rgba(0, 0, 0, 0.1);
+}
+
+.category-box:hover::before,
+.category-box:hover::after {
+  opacity: 1;
+}
+
+/* ACTIVE*/
+.category-box:active {
+  transform: translateY(-4px) scale(0.98);
+}
+
+/* RESPONSIVE*/
+@media (max-width: 640px) {
+  .select-category-page {
+    padding: 70px 16px 40px;
+  }
+
+  .select-category-page h2 {
+    font-size: 26px;
+    margin-bottom: 32px;
+  }
+
+  .category-box img {
+    height: 140px;
+  }
+}
+
+/* SELECTED STATE */
+.category-box.active {
+  transform: translateY(-6px) scale(1.04);
+  border-color: #7c4dff;
+  box-shadow:
+    0 30px 60px rgba(124, 77, 255, 0.45),
+    0 10px 20px rgba(0, 0, 0, 0.12);
+}
+
+.category-box.active::before,
+.category-box.active::after {
+  opacity: 1;
+}
+
+/* Checkmark indicator */
+.category-box.active span::after {
+  content: " ✓";
+  color: #7c4dff;
+  font-weight: 900;
+}
+
+.save-btn {
+  margin-top: 48px;
+  padding: 16px 44px;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+
+  background: linear-gradient(
+    135deg,
+    #7c4dff,
+    #3b82f6
+  );
+
+  color: white;
+  box-shadow:
+    0 20px 40px rgba(124, 77, 255, 0.45);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.save-btn:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 30px 60px rgba(124, 77, 255, 0.55);
+}
+
+.save-btn:active {
+  transform: scale(0.97);
+}
+
