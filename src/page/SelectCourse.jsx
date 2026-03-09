@@ -57,24 +57,40 @@ function SelectCourse() {
         <h2>{category}</h2>
         <p>Courses select kar (multiple allowed)</p>
 
-        <div className="course-grid">
+        <div className="course-scroll-container">
           {courses.map((c) => (
             <div
               key={c.course}
-              className={`course-box ${
-                selectedCourses.includes(c.course) ? "selected" : ""
-              }`}
+              className={`course-card-premium ${selectedCourses.includes(c.course) ? "is-selected" : ""
+                }`}
               onClick={() => toggleCourse(c.course)}
             >
-              {c.course}
+              {/* Check Icon Tag */}
+              {selectedCourses.includes(c.course) && (
+                <div className="check-badge">
+                  <span className="check-icon">✓</span>
+                </div>
+              )}
+
+              <div className="card-image-wrapper">
+                <img src={c.photo} alt={c.course} />
+              </div>
+
+              <div className="card-content-area">
+                <span className="course-category-tag">{category}</span>
+                <h3 className="course-title-main">{c.course}</h3>
+                <p className="course-subtitle-small">Master the fundamentals and advanced concepts with step-by-step guidance.</p>
+              </div>
             </div>
           ))}
         </div>
 
-        {/* ✅ CHECKOUT BUTTON */}
-        <button className="checkout-btn" onClick={goCheckout}>
-          Checkout ({selectedCourses.length})
-        </button>
+        {/* ✅ STICKY CHECKOUT BUTTON */}
+        <div className="checkout-btn-container">
+          <button className="checkout-btn" onClick={goCheckout}>
+            Checkout ({selectedCourses.length})
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -60,7 +60,9 @@ function InstructorDashboard() {
       return;
     }
 
-    authFetch("http://localhost:3030/instructor/profile").then(setProfile);
+    authFetch("http://localhost:3030/instructor/profile").then((p) => {
+      setProfile({ ...p, category: p.category || [] });
+    });
 
     authFetch("http://localhost:3030/instructor/students").then(setStudents);
 
@@ -91,7 +93,14 @@ function InstructorDashboard() {
         mobile: profile.mobile_no,
         category: profile.category,
       }),
-    }).then(() => setEditMode(false));
+    }).then(() => {
+      setEditMode(false);
+      setCategoryOpen(false);
+      alert("✅ Profile updated successfully!");
+      authFetch("http://localhost:3030/instructor/profile").then((p) => {
+        setProfile({ ...p, category: p.category || [] });
+      });
+    });
   }
 
   function logout() {
@@ -170,10 +179,30 @@ function InstructorDashboard() {
                 className={`category-input ${!editMode ? "disabled" : ""}`}
                 onClick={() => editMode && setCategoryOpen(!categoryOpen)}
               >
-                {profile.category?.length
-                  ? profile.category.join(", ")
-                  : "Select categories"}
-                <span className="arrow">▾</span>
+                <div className="selected-tags">
+                  {profile.category?.length > 0 ? (
+                    profile.category.map((cat) => (
+                      <span key={cat} className="tag">
+                        {cat}
+                        {editMode && (
+                          <button
+                            className="tag-remove"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              const updated = profile.category.filter((c) => c !== cat);
+                              setProfile({ ...profile, category: updated });
+                            }}
+                          >
+                            ×
+                          </button>
+                        )}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="placeholder">Select categories</span>
+                  )}
+                </div>
+                {editMode && <span className="arrow">▾</span>}
               </div>
 
               {categoryOpen && (
@@ -183,9 +212,10 @@ function InstructorDashboard() {
                       key={cat}
                       className="category-option"
                       onClick={() => {
-                        const updated = profile.category.includes(cat)
-                          ? profile.category.filter((c) => c !== cat)
-                          : [...profile.category, cat];
+                        const currentCats = profile.category || [];
+                        const updated = currentCats.includes(cat)
+                          ? currentCats.filter((c) => c !== cat)
+                          : [...currentCats, cat];
 
                         setProfile({ ...profile, category: updated });
                       }}
@@ -198,6 +228,33 @@ function InstructorDashboard() {
                       <span>{cat}</span>
                     </div>
                   ))}
+
+                  {/* Option to add custom category if list is too limited */}
+                  <div className="category-custom">
+                    <input
+                      placeholder="Add another..."
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && e.target.value.trim()) {
+                          const val = e.target.value.trim();
+                          if (!profile.category?.includes(val)) {
+                            setProfile({ ...profile, category: [...(profile.category || []), val] });
+                          }
+                          e.target.value = '';
+                        }
+                      }}
+                    />
+                  </div>
+                  <div className="category-footer">
+                    <button
+                      className="done-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setCategoryOpen(false);
+                      }}
+                    >
+                      Done
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -418,7 +475,9 @@ function InstructorDashboard() {
                   <>
                     <span>{l.lecture_title}</span>
                     <span>Order: {l.lecture_order}</span>
-                    <span>{l.video_url ? "🎥 Uploaded" : "❌ No Video"}</span>
+                    <span className={`video-status ${l.video_url ? 'uploaded' : 'missing'}`}>
+                      {l.video_url ? `🎥 Video Ready` : "❌ No Video"}
+                    </span>
 
                     <button
                       id="ed"

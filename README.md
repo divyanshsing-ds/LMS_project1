@@ -1,6 +1,6 @@
 # 🎓 LMS Platform: Advanced Learning Management System
 
-An interactive, role-based **Learning Management System** built designed to bridge the gap between Instructors and Students. It features full-stack architecture with a **React Frontend**, **Node.js/Express Backend**, **PostgreSQL** for relational data, and **Google Gemini AI** for dynamic quiz generation.
+An interactive, role-based **Learning Management System** designed to bridge the gap between Instructors and Students. This platform features a high-performance **React Frontend**, a resilient **Node.js/Express Backend** with database pooling, and intelligent **Gemini AI** integration.
 
 ---
 
@@ -10,7 +10,7 @@ An interactive, role-based **Learning Management System** built designed to brid
 graph TD
     %% Roles
     Student[🧑‍🎓 Student] -->|Browses Courses, Takes Quizzes| ReactApp
-    Instructor[👨‍🏫 Instructor] -->|Uploads Videos, Manages Courses| ReactApp
+    Instructor[👨‍🏫 Instructor] -->|Uploads Videos, Manages Profile| ReactApp
 
     %% Frontend
     subgraph Frontend [React SPA Client]
@@ -25,59 +25,61 @@ graph TD
     %% Backend Server
     subgraph Backend [Express API Server]
         NodeServer[⚙️ Express.js Gateway]
-        Multer[💾 Multer Storage System]
+        Pool[🏊 Pool: Concurrent Connections]
+        Multer[💾 Multer Sanitized Storage]
         AuthGuard[🔐 Role-Based Middleware]
         NodeServer --- AuthGuard
+        NodeServer --- Pool
         NodeServer --- Multer
     end
 
     %% External & Persistence Layer
     subgraph Data Layer
         Postgres[(🐘 PostgreSQL Database)]
-        Gemini[🧠 Google Gemini AI]
+        Gemini[🧠 Gemini 2.0 Flash AI]
     end
 
     %% Backend Connections
-    NodeServer -- Relational Queries --> Postgres
-    NodeServer -- Quiz Prompts --> Gemini
+    NodeServer -- Scalable Pooling --> Postgres
+    NodeServer -- AI Insights & Quizzes --> Gemini
 ```
 
 ---
 
-## 🚀 Key Features
+## 🚀 Key Features (Latest Updates)
 
-### 🔐 Authentication & Security
-- **Secure Sign-Up/Login**: Powered by `bcrypt` for password hashing and `jsonwebtoken` (JWT) for stateless authentication.
-- **Role-Based Access Control (RBAC)**: Strict separation between `Student` and `Instructor` privileges.
-- **Protected Routes**: Custom Express middleware to validate and decode session tokens before serving protected resources.
+### 🧑‍🏫 Instructor Dashboard (Premium)
+- **Interactive Profile Manager**: Manage specialty categories using a dynamic **tag-based selection system**.
+- **Visual Analytics**: Premium **Circular Progress Rings** and real-time status indicators for course lectures.
+- **Custom Categories**: Instructors can dynamically add new categories directly from their dashboard.
+- **GPU Optimized UI**: Smooth dropdowns and transitions powered by hardware-accelerated CSS.
 
-### 🧑‍🎓 Student Experience
-- **Course Discovery**: Browse through carefully categorized educational content.
-- **Fluid Video Player**: Watch instructor-uploaded lectures seamlessly.
-- **AI-Powered Assessments**: Immediately test knowledge after a lecture using 10-question multiple-choice quizzes logically generated on-the-fly by **Google Gemini**.
-- **Progress Tracking**: Monitor completion percentages and track learning visually.
+### 🧑‍🎓 Student Experience & Discovery
+- **Smart Recommendations**: Personal course suggestions powered by Gemini AI's analysis of your interests.
+- **AI Summary Engine**: Get instant **AI-generated summaries** for any lecture to grasp key points faster.
+- **Case-Insensitive Search**: Improved course matching ensuring you find what you need regardless of capitalization.
+- **Resilient Quiz System**: Dynamic MCQs generated on-the-fly, with built-in **fallback logic** so learning never stops, even if AI limits are reached.
 
-### 👩‍🏫 Instructor Dashboard
-- **Course Crafting**: Create beautifully structured courses nested within logical categories.
-- **Lecture Management**: Define the sequence of lectures so students learn step-by-step.
-- **Media Uploads**: Directly upload large video files seamlessly via the `Multer` integration.
-
-### 🧠 Gemini AI Quiz Engine
-- Instantly analyzes lecture topics to generate dynamically unique MCQs.
-- Automatically scores students based on completion logic and records their progression directly into the PostgreSQL Database.
+### 🛠️ Backend Performance & Reliability
+- **Concurrent Connection Pooling**: Switched from single-client to **PostgreSQL Pooling**, supporting multiple users simultaneously with zero lag.
+- **Smart Video Handling**: 
+  - Automated **Filename Sanitization**: Replaces spaces and special characters with safe underscores.
+  - **Absolute Path Mapping**: Ensures video files are always stored and served from the correct server directory.
+  - **URL Encoding**: Robust video source handling for cross-browser playback support.
+- **AI Resilience**: Upgraded to **Gemini 2.0 Flash** with a robust fallback system that provides placeholder content if the API key hits quota limits.
 
 ---
 
-## �️ Complete Technology Stack
+## 🛠️ Complete Technology Stack
 
 | Layer | Technologies Used |
 |---|---|
-| **Frontend UI** | React 19, Vite, React Router DOM v7, Lucide React (Icons) |
+| **Frontend UI** | React 19, Vite, React Router DOM, Lucide React (Icons), CSS3 |
 | **Backend API** | Node.js, Express.js (v5) |
-| **Database** | PostgreSQL (`pg` library) |
-| **File Storage** | Multer (Local Disk Storage for Videos) |
-| **AI Integration** | Google Gemini API |
-| **Security** | Express CORS, bcrypt, jsonwebtoken |
+| **Database** | PostgreSQL with `pg-pool` (Scalable Batching) |
+| **File Storage** | Multer (Sanitized Local Disk Storage) |
+| **AI Integration** | Google Gemini 2.0 Flash API (Quizzes, Summaries, Recommendations) |
+| **Security** | Express CORS, bcrypt (5-round hashing), JWT Authentication |
 
 ---
 
@@ -85,79 +87,73 @@ graph TD
 
 ```mermaid
 erDiagram
-    USERS ||--o{ ENROLLMENTS : enrolls
-    USERS ||--o{ COURSES : creates
-    CATEGORIES ||--o{ COURSES : contains
+    LOGIN ||--|| STUDENT : links
+    LOGIN ||--|| INSTRUCTOR : links
+    INSTRUCTOR ||--o{ COURSES : manages
     COURSES ||--o{ LECTURES : consists_of
-    LECTURES ||--o{ QUIZZES : evaluated_by
-    QUIZZES ||--o{ QUIZ_PROGRESS : tracks
+    STUDENT ||--o{ PROGRESS : tracks
+    LECTURES ||--o{ PROGRESS : evaluated_in
 
-    USERS {
+    LOGIN {
         int id PK
-        string name
         string email
         string password_hash
         string role "Student | Instructor"
     }
+    INSTRUCTOR {
+        int id PK
+        int login_id FK
+        string name
+        string[] category
+    }
     COURSES {
         int id PK
-        string title
-        string description
-        int instructor_id FK
-        int category_id FK
+        string course
+        string category
+        string photo
     }
     LECTURES {
         int id PK
-        string title
-        string video_url
         int course_id FK
-        int sequence_order
+        string lecture_title
+        string video_url
+        string summary
     }
 ```
 
 ---
 
-## � Local Development Setup
+## 💻 Local Development Setup
 
-To get this project running up locally:
+To get this project running locally:
 
 ### 1. Prerequisites
 - **Node.js**: v18+ Recommended
-- **PostgreSQL**: Running locally or via cloud URL
-- **Google Gemini API Key**: For quiz generation
+- **PostgreSQL**: Local instance or Cloud URI
+- **Google Gemini API Key**: [Get one here](https://aistudio.google.com/app/apikey)
 
-### 2. Clone the Repository
-```bash
-git clone https://github.com/divyanshsing-ds/LMS_project1.git
-cd LMS_project1
-```
-
-### 3. Setup Backend Environment
-Create a `.env` in the `Backend/server` folder:
+### 2. Setup Backend Environment
+In `Backend/server/.env`:
 ```env
-PORT=5000
+PORT=3030
 DATABASE_URL=postgres://user:password@localhost:5432/lms_db
-JWT_SECRET=your_super_secret_key
+JWT_SECRET=your_jwt_secret
 GEMINI_API_KEY=your_gemini_key
+BASE_URL=http://localhost:3030
 ```
 
-### 4. Install Dependencies
+### 3. Install & Start
 ```bash
-# Root (Frontend)
-npm install
+# 1. Install all dependencies
+npm install && cd Backend/server && npm install
 
-# Backend
-cd Backend/server
-npm install
-```
-
-### 5. Start Development Servers
-You will need two terminal windows:
-```bash
-# Terminal 1: Frontend
-npm run dev
-
-# Terminal 2: Backend
-cd Backend/server
+# 2. Start Backend (Terminal 1)
 node server.js
+
+# 3. Start Frontend (Terminal 2)
+cd ../..
+npm run dev
 ```
+
+---
+*Maintained with ❤️ for superior learning experiences.*

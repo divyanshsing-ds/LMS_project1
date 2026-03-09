@@ -1,5 +1,5 @@
 * {
-  margin:0px;
+  margin: 0px;
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
 }
@@ -29,7 +29,7 @@
   background: linear-gradient(135deg, #8b7cff, #b8a9ff);
   color: white;
   padding: 40px;
-  padding-left:80px;
+  padding-left: 80px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -148,8 +148,8 @@
 }
 
 
-.field input:focus + label,
-.field input:not(:placeholder-shown) + label {
+.field input:focus+label,
+.field input:not(:placeholder-shown)+label {
   top: -8px;
   font-size: 11px;
   color: #1d2671;
@@ -176,6 +176,7 @@ select {
     opacity: 0;
     transform: translateY(-10px) scale(0.98);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -201,4 +202,3 @@ select {
   transform: translateY(-1px);
   box-shadow: 0 8px 20px rgba(123, 107, 242, 0.35);
 }
-

@@ -1,79 +1,90 @@
 /* ================= ROOT ================= */
+:root {
+  --primary: #6d5dfc;
+  --primary-light: #8b7cff;
+  --bg: #f8fafc;
+  --sidebar-bg: #1e293b;
+  --sidebar-text: #94a3b8;
+  --sidebar-active: #ffffff;
+}
+
 .inst-layout {
   min-height: 100vh;
   display: flex;
-  background: #f6f8fc;
+  background: var(--bg);
   font-family: "Inter", system-ui, sans-serif;
-  color: #111827;
+  color: #1e293b;
 }
 
 /* ================= SIDEBAR ================= */
 .inst-sidebar {
-  width: 240px;
-  background: #ffffff;
-  padding: 28px 22px;
-  border-right: 1px solid #e5e7eb;
+  width: 280px;
+  background: var(--sidebar-bg);
+  padding: 40px 24px;
+  display: flex;
+  flex-direction: column;
+  color: var(--sidebar-text);
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.05);
 }
 
 .inst-sidebar h2 {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 800;
-  margin-bottom: 26px;
+  margin-bottom: 40px;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .inst-sidebar button {
   width: 100%;
   background: none;
   border: none;
-  padding: 12px 16px;
-  margin-bottom: 12px;
+  padding: 14px 20px;
+  margin-bottom: 8px;
   text-align: left;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 15px;
-  border-radius: 14px;
+  border-radius: 16px;
   cursor: pointer;
-  color: #374151;
-  transition: all 0.2s ease;
+  color: var(--sidebar-text);
+  transition: all 0.3s ease;
 }
 
 .inst-sidebar button:hover {
-  background: #ede9fe;
-  color: #4f46e5;
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
 }
 
-/* ===== ACTIVE TAB (PURE BLUE) ===== */
 .inst-sidebar button.active {
-  background: linear-gradient(135deg, #6d5dfc, #8b7cff);
+  background: var(--primary);
   color: #ffffff;
-  font-weight: 700;
-  box-shadow: 0 10px 22px rgba(109, 93, 252, 0.35);
+  font-weight: 600;
+  box-shadow: 0 10px 20px rgba(109, 93, 252, 0.3);
 }
 
 /* ================= MAIN ================= */
 .inst-main {
   flex: 1;
-  padding: 32px 48px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  padding: 48px 60px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .inst-main h1 {
-  font-size: 26px;
+  font-size: 32px;
   font-weight: 800;
-  align-self: flex-start;
-  margin-bottom: 28px;
+  margin-bottom: 40px;
 }
 
 /* ================= CARD ================= */
 .card {
-  width: 100%;
-  max-width: 720px;
   background: #ffffff;
-  border-radius: 24px;
-  padding: 30px;
-  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.06);
-  overflow: visible;
+  border-radius: 28px;
+  padding: 40px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  border: 1px solid #e2e8f0;
 }
 
 .card h3 {
@@ -113,12 +124,18 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 14px;
+  padding: 8px 14px;
+  /* Reduced vertical padding for tags */
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   background: #ffffff;
   cursor: pointer;
-  font-size: 14px;
+  min-height: 48px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.category-input:hover:not(.disabled) {
+  border-color: var(--primary);
 }
 
 .category-input.disabled {
@@ -126,39 +143,134 @@
   cursor: not-allowed;
 }
 
-.category-input .arrow {
-  font-size: 12px;
-  opacity: 0.6;
+/* TAG SYSTEM */
+.selected-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-width: 90%;
 }
 
-/* dropdown panel */
+.tag {
+  background: #f0edff;
+  color: var(--primary);
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #e0dbff;
+  animation: tagScale 0.2s ease-out;
+}
+
+@keyframes tagScale {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.tag-remove {
+  background: none !important;
+  color: var(--primary);
+  padding: 0 !important;
+  border: none !important;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  margin: 0 !important;
+  box-shadow: none !important;
+}
+
+.tag-remove:hover {
+  background: rgba(109, 93, 252, 0.1) !important;
+}
+
+/* CATEGORY DROPDOWN OPTIMIZATION */
 .category-dropdown {
   position: absolute;
   top: calc(100% + 8px);
   left: 0;
   width: 100%;
-  max-height: 220px;
+  max-height: 300px;
   overflow-y: auto;
   background: #ffffff;
   border: 1px solid #e5e7eb;
-  border-radius: 14px;
-  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.12);
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   z-index: 50;
-  padding: 6px 0;
+  padding: 8px 0;
+  /* GPU Acceleration */
+  transform: translateZ(0);
+  will-change: opacity, transform;
 }
 
-/* each option */
 .category-option {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 16px;
+  padding: 12px 16px;
   cursor: pointer;
   font-size: 14px;
+  transition: background 0.15s ease;
+}
+
+/* FOOTER & DONE BUTTON */
+.category-footer {
+  padding: 12px 16px;
+  border-top: 1px solid #f3f4f6;
+  background: #fafafa;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.done-btn {
+  background: var(--primary) !important;
+  color: white !important;
+  padding: 6px 16px !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  border-radius: 8px !important;
 }
 
 .category-option:hover {
   background: #f5f7ff;
+}
+
+/* CUSTOM CATEGORY INPUT IN DROPDOWN */
+.category-custom {
+  padding: 10px 16px;
+  border-top: 1px solid #f3f4f6;
+  margin-top: 4px;
+}
+
+.category-custom input {
+  width: 100% !important;
+  padding: 10px 14px !important;
+  border-radius: 10px !important;
+  border: 1px solid #e5e7eb !important;
+  font-size: 13px !important;
+  margin-bottom: 0 !important;
+  background: #fafafa !important;
+}
+
+.category-custom input:focus {
+  outline: none;
+  border-color: var(--primary) !important;
+  background: #ffffff !important;
 }
 
 .category-option input[type="checkbox"] {
@@ -192,8 +304,8 @@ button {
   transition: all 0.2s ease;
 }
 
-#ed{
-  margin:5px;
+#ed {
+  margin: 5px;
 }
 
 /* PRIMARY (Save / Add / Default) */
