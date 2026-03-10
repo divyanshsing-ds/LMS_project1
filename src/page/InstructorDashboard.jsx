@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { User, BookOpen, Users, Video, Edit3, Trash2, Plus, CheckCircle, Upload, LogOut, ChevronDown } from "lucide-react";
 import "../styles/InstructorDashboard.css";
 
 function InstructorDashboard() {
@@ -103,68 +104,56 @@ function InstructorDashboard() {
     });
   }
 
-  function logout() {
-    localStorage.removeItem("user-token");
-    navigate("/");
+  function handleTagToggle(cat) {
+    const updated = profile.category.includes(cat)
+      ? profile.category.filter((c) => c !== cat)
+      : [...profile.category, cat];
+    setProfile({ ...profile, category: updated });
   }
-
-  if (!profile) return null;
 
   return (
     <div className="inst-layout">
-      {/* ========== SIDEBAR ========== */}
+      {/* ================= SIDEBAR ================= */}
       <aside className="inst-sidebar">
-        <h2>Instructor</h2>
+        <h2>LMS Instructor</h2>
 
-        <button
-          className={active === "profile" ? "active" : ""}
-          onClick={() => setActive("profile")}
-        >
-          Overview
-        </button>
+        <nav>
+          <button className={active === "profile" ? "active" : ""} onClick={() => setActive("profile")}>
+            <User size={18} /> Profile
+          </button>
+          <button className={active === "course" ? "active" : ""} onClick={() => setActive("course")}>
+            <BookOpen size={18} /> Courses
+          </button>
+          <button className={active === "lecture" ? "active" : ""} onClick={() => setActive("lecture")}>
+            <Video size={18} /> Lectures
+          </button>
+          <button className={active === "students" ? "active" : ""} onClick={() => setActive("students")}>
+            <Users size={18} /> Students
+          </button>
+        </nav>
 
-        <button
-          className={active === "course" ? "active" : ""}
-          onClick={() => setActive("course")}
-        >
-          Courses
-        </button>
-
-        <button
-          className={active === "lecture" ? "active" : ""}
-          onClick={() => setActive("lecture")}
-        >
-          Lectures
-        </button>
-
-        <button
-          className={active === "students" ? "active" : ""}
-          onClick={() => setActive("students")}
-        >
-          Students
-        </button>
+        <div style={{ marginTop: 'auto' }}>
+          <button className="logout" onClick={() => { localStorage.removeItem("user-token"); navigate("/"); }}>
+            <LogOut size={18} /> Logout
+          </button>
+        </div>
       </aside>
 
-      {/* ========== MAIN ========== */}
+      {/* ================= MAIN CONTENT ================= */}
       <main className="inst-main">
-        <h1>Instructor Dashboard</h1>
-
         {/* ========== PROFILE ========== */}
-        {active === "profile" && (
+        {active === "profile" && profile && (
           <div className="card">
-            <h3>Profile</h3>
+            <h3><User size={20} color="#6d5dfc" /> General Information</h3>
 
-            <label>Name</label>
+            <label>Full Name</label>
             <input
               value={profile.name}
               disabled={!editMode}
               onChange={(e) => setProfile({ ...profile, name: e.target.value })}
             />
 
-            <label>Email</label>
-            <input value={profile.email} disabled />
-
-            <label>Mobile</label>
+            <label>Mobile Number</label>
             <input
               value={profile.mobile_no}
               disabled={!editMode}
@@ -173,86 +162,77 @@ function InstructorDashboard() {
               }
             />
 
-            <label>Categories</label>
-            <div className="category-wrapper">
+            {/* CATEGORY SELECTOR */}
+            <label>Teaching Specialties</label>
+            <div className={`category-wrapper ${!editMode ? "disabled" : ""}`}>
               <div
                 className={`category-input ${!editMode ? "disabled" : ""}`}
                 onClick={() => editMode && setCategoryOpen(!categoryOpen)}
               >
                 <div className="selected-tags">
-                  {profile.category?.length > 0 ? (
-                    profile.category.map((cat) => (
-                      <span key={cat} className="tag">
-                        {cat}
+                  {profile.category.length > 0 ? (
+                    profile.category.map((c) => (
+                      <span key={c} className="tag">
+                        {c}
                         {editMode && (
-                          <button
+                          <span
                             className="tag-remove"
                             onClick={(e) => {
                               e.stopPropagation();
-                              const updated = profile.category.filter((c) => c !== cat);
-                              setProfile({ ...profile, category: updated });
+                              handleTagToggle(c);
                             }}
                           >
                             ×
-                          </button>
+                          </span>
                         )}
                       </span>
                     ))
                   ) : (
-                    <span className="placeholder">Select categories</span>
+                    <span style={{ color: "#94a3b8" }}>Select Specialties...</span>
                   )}
                 </div>
-                {editMode && <span className="arrow">▾</span>}
+                <ChevronDown size={18} color="#94a3b8" />
               </div>
 
-              {categoryOpen && (
+              {categoryOpen && editMode && (
                 <div className="category-dropdown">
-                  {allCategories.map((cat) => (
-                    <div
-                      key={cat}
-                      className="category-option"
-                      onClick={() => {
-                        const currentCats = profile.category || [];
-                        const updated = currentCats.includes(cat)
-                          ? currentCats.filter((c) => c !== cat)
-                          : [...currentCats, cat];
+                  <div className="dropdown-scroll">
+                    {allCategories.map((cat) => (
+                      <div
+                        key={cat}
+                        className="category-option"
+                        onClick={() => handleTagToggle(cat)}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={profile.category.includes(cat)}
+                          readOnly
+                        />
+                        <span>{cat}</span>
+                      </div>
+                    ))}
+                  </div>
 
-                        setProfile({ ...profile, category: updated });
-                      }}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={profile.category?.includes(cat)}
-                        readOnly
-                      />
-                      <span>{cat}</span>
-                    </div>
-                  ))}
-
-                  {/* Option to add custom category if list is too limited */}
+                  {/* ADD CUSTOM CATEGORY */}
                   <div className="category-custom">
                     <input
-                      placeholder="Add another..."
+                      type="text"
+                      placeholder="Add new specialty..."
                       onKeyDown={(e) => {
-                        if (e.key === 'Enter' && e.target.value.trim()) {
+                        if (e.key === "Enter" && e.target.value.trim()) {
                           const val = e.target.value.trim();
-                          if (!profile.category?.includes(val)) {
-                            setProfile({ ...profile, category: [...(profile.category || []), val] });
+                          if (!profile.category.includes(val)) {
+                            handleTagToggle(val);
+                            e.target.value = "";
                           }
-                          e.target.value = '';
                         }
                       }}
                     />
                   </div>
+
                   <div className="category-footer">
-                    <button
-                      className="done-btn"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setCategoryOpen(false);
-                      }}
-                    >
-                      Done
+                    <button className="done-btn" onClick={() => setCategoryOpen(false)}>
+                      Apply Specialties
                     </button>
                   </div>
                 </div>
@@ -260,15 +240,11 @@ function InstructorDashboard() {
             </div>
 
             <div className="card-actions">
-              <button
-                onClick={() => (editMode ? updateProfile() : setEditMode(true))}
-              >
-                {editMode ? "Save" : "Edit"}
-              </button>
-
-              <button className="logout" onClick={logout}>
-                Logout
-              </button>
+              {editMode ? (
+                <button className="btn-save" onClick={updateProfile}>Save Changes</button>
+              ) : (
+                <button className="edit-btn" onClick={() => setEditMode(true)}>Edit Profile</button>
+              )}
             </div>
           </div>
         )}
@@ -276,53 +252,48 @@ function InstructorDashboard() {
         {/* ========== COURSES ========== */}
         {active === "course" && (
           <div className="card">
-            <h3>Your Courses</h3>
+            <h3><BookOpen size={20} color="#6d5dfc" /> Manage Courses</h3>
 
             {courses.map((c) => (
-              <div key={c.id} className="student-row">
+              <div key={c.id} className={editingCourse === c.id ? "course-edit-row" : "course-row"}>
                 {editingCourse === c.id ? (
                   <>
                     <input
                       value={editCategory}
                       onChange={(e) => setEditCategory(e.target.value)}
                     />
-
                     <input
                       value={editCourse}
                       onChange={(e) => setEditCourse(e.target.value)}
                     />
-
                     <button
-                      onClick={() => {
-                        fetch(
-                          `http://localhost:3030/instructor/course/${c.id}`,
-                          {
-                            method: "PUT",
-                            headers: {
-                              "Content-Type": "application/json",
-                              Authorization: token,
-                            },
-                            body: JSON.stringify({
-                              category: editCategory,
-                              course: editCourse,
-                            }),
-                          }
-                        ).then(() => {
+                      className="btn-save"
+                      onClick={() =>
+                        fetch(`http://localhost:3030/instructor/course/${c.id}`, {
+                          method: "PUT",
+                          headers: {
+                            "Content-Type": "application/json",
+                            Authorization: token,
+                          },
+                          body: JSON.stringify({
+                            category: editCategory,
+                            course: editCourse,
+                          }),
+                        }).then(() => {
                           setEditingCourse(null);
-                          authFetch(
-                            "http://localhost:3030/instructor/courses"
-                          ).then(setCourses);
-                        });
-                      }}
+                          authFetch("http://localhost:3030/instructor/courses").then(setCourses);
+                        })
+                      }
                     >
                       Save
                     </button>
                   </>
                 ) : (
                   <>
-                    <span>{c.category}</span>
-                    <span className="clickable">{c.course}</span>
-
+                    <div>
+                      <span className="tag">{c.category}</span>
+                    </div>
+                    <span style={{ fontWeight: 700 }}>{c.course}</span>
                     <button
                       className="edit-btn"
                       onClick={() => {
@@ -331,125 +302,106 @@ function InstructorDashboard() {
                         setEditCourse(c.course);
                       }}
                     >
-                      Edit
+                      <Edit3 size={14} /> Edit
                     </button>
-
                     <button
                       className="danger"
                       onClick={() =>
-                        fetch(
-                          `http://localhost:3030/instructor/course/${c.id}`,
-                          {
-                            method: "DELETE",
-                            headers: { Authorization: token },
-                          }
-                        ).then(() =>
+                        fetch(`http://localhost:3030/instructor/course/${c.id}`, {
+                          method: "DELETE",
+                          headers: { Authorization: token },
+                        }).then(() =>
                           setCourses(courses.filter((x) => x.id !== c.id))
                         )
                       }
                     >
-                      Delete
+                      <Trash2 size={14} /> Remove
                     </button>
                   </>
                 )}
               </div>
             ))}
 
-            <hr />
-
-            <h3>Add Course</h3>
-
-            <input
-              placeholder="Category"
-              value={newCategory}
-              onChange={(e) => setNewCategory(e.target.value)}
-            />
-
-            <input
-              placeholder="Course Name"
-              value={newCourse}
-              onChange={(e) => setNewCourse(e.target.value)}
-            />
-
-            <button
-              onClick={() =>
-                fetch("http://localhost:3030/instructor/course", {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                    Authorization: token,
-                  },
-                  body: JSON.stringify({
-                    category: newCategory,
-                    course: newCourse,
-                  }),
-                }).then(() => {
-                  setNewCategory("");
-                  setNewCourse("");
-                  authFetch("http://localhost:3030/instructor/courses").then(
-                    setCourses
-                  );
-                })
-              }
-            >
-              Add Course
-            </button>
+            <div className="add-lecture" style={{ marginTop: '40px' }}>
+              <h3><Plus size={18} /> New Course</h3>
+              <div className="form-row">
+                <input
+                  placeholder="Category (e.g. Design)"
+                  value={newCategory}
+                  onChange={(e) => setNewCategory(e.target.value)}
+                />
+                <input
+                  placeholder="Course Name"
+                  value={newCourse}
+                  onChange={(e) => setNewCourse(e.target.value)}
+                />
+                <button className="btn-save"
+                  onClick={() =>
+                    fetch("http://localhost:3030/instructor/course", {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                        Authorization: token,
+                      },
+                      body: JSON.stringify({
+                        category: newCategory,
+                        course: newCourse,
+                      }),
+                    }).then(() => {
+                      setNewCategory("");
+                      setNewCourse("");
+                      authFetch("http://localhost:3030/instructor/courses").then(setCourses);
+                    })
+                  }
+                >
+                  Create Course
+                </button>
+              </div>
+            </div>
           </div>
         )}
 
         {/* ========== LECTURES ========== */}
         {active === "lecture" && (
           <div className="card">
-            <h3>Lectures</h3>
+            <h3><Video size={20} color="#6d5dfc" /> Lecture Curriculum</h3>
 
-            {/* ================= SELECT COURSE ================= */}
+            <label>Select Course</label>
             <select
               value={selectedCourse}
               onChange={(e) => {
                 const courseId = e.target.value;
                 setSelectedCourse(courseId);
-
                 if (courseId) {
-                  authFetch(
-                    `http://localhost:3030/instructor/lectures/${courseId}`
-                  ).then(setLectures);
+                  authFetch(`http://localhost:3030/instructor/lectures/${courseId}`).then(setLectures);
                 } else {
                   setLectures([]);
                 }
               }}
             >
-              <option value="">Select Course</option>
+              <option value="">Choose a Course to Edit...</option>
               {courses.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.course}
-                </option>
+                <option key={c.id} value={c.id}>{c.course}</option>
               ))}
             </select>
 
-            {!selectedCourse && <p>Select a course first</p>}
-
-            <hr />
-
-            {/* ================= EXISTING LECTURES ================= */}
-            {lectures.map((l) => (
-              <div key={l.id} className="lecture-row">
-                {editingLecture === l.id ? (
-                  <>
-                    <input
-                      value={editLectureTitle}
-                      onChange={(e) => setEditLectureTitle(e.target.value)}
-                    />
-
-                    <input
-                      value={editLectureOrder}
-                      onChange={(e) => setEditLectureOrder(e.target.value)}
-                    />
-
-                    <button
-                      onClick={() => {
-                        fetch(
-                          `http://localhost:3030/instructor/lecture/${l.id}`,
-                          {
+            <div className="lecture-list">
+              {lectures.map((l) => (
+                <div key={l.id} className="lecture-row">
+                  {editingLecture === l.id ? (
+                    <div className="lecture-edit">
+                      <input
+                        value={editLectureTitle}
+                        onChange={(e) => setEditLectureTitle(e.target.value)}
+                      />
+                      <input
+                        type="number"
+                        value={editLectureOrder}
+                        onChange={(e) => setEditLectureOrder(e.target.value)}
+                      />
+                      <button className="btn-save"
+                        onClick={() => {
+                          fetch(`http://localhost:3030/instructor/lecture/${l.id}`, {
                             method: "PUT",
                             headers: {
                               "Content-Type": "application/json",
@@ -459,156 +411,130 @@ function InstructorDashboard() {
                               title: editLectureTitle,
                               order: editLectureOrder,
                             }),
-                          }
-                        ).then(() => {
-                          setEditingLecture(null);
-                          authFetch(
-                            `http://localhost:3030/instructor/lectures/${selectedCourse}`
-                          ).then(setLectures);
-                        });
-                      }}
-                    >
-                      Save
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <span>{l.lecture_title}</span>
-                    <span>Order: {l.lecture_order}</span>
-                    <span className={`video-status ${l.video_url ? 'uploaded' : 'missing'}`}>
-                      {l.video_url ? `🎥 Video Ready` : "❌ No Video"}
-                    </span>
+                          }).then(() => {
+                            setEditingLecture(null);
+                            authFetch(`http://localhost:3030/instructor/lectures/${selectedCourse}`).then(setLectures);
+                          });
+                        }}
+                      >
+                        Save
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="lecture-top">
+                        <span className="lecture-title">{l.lecture_title}</span>
+                        <span className="lecture-order"># {l.lecture_order}</span>
+                        <span className={`video-status ${l.video_url ? 'uploaded' : 'missing'}`}>
+                          {l.video_url ? <><CheckCircle size={14} /> Ready</> : "No Video"}
+                        </span>
+                        <div className="lecture-actions">
+                          <button className="edit-btn" onClick={() => {
+                            setEditingLecture(l.id);
+                            setEditLectureTitle(l.lecture_title);
+                            setEditLectureOrder(l.lecture_order);
+                          }}><Edit3 size={14} /></button>
+                          <button className="danger" onClick={() => {
+                            fetch(`http://localhost:3030/instructor/lecture/${l.id}`, {
+                              method: "DELETE",
+                              headers: { Authorization: token },
+                            }).then(() => setLectures(lectures.filter((x) => x.id !== l.id)));
+                          }}><Trash2 size={14} /></button>
+                        </div>
+                      </div>
 
-                    <button
-                      id="ed"
-                      onClick={() => {
-                        setEditingLecture(l.id);
-                        setEditLectureTitle(l.lecture_title);
-                        setEditLectureOrder(l.lecture_order);
-                      }}
-                    >
-                      Edit
-                    </button>
-
-                    <button
-                      id="ed"
-                      className="danger"
-                      onClick={() =>
-                        fetch(
-                          `http://localhost:3030/instructor/lecture/${l.id}`,
-                          {
-                            method: "DELETE",
-                            headers: { Authorization: token },
-                          }
-                        ).then(() =>
-                          setLectures(lectures.filter((x) => x.id !== l.id))
-                        )
-                      }
-                    >
-                      Delete
-                    </button>
-
-                    {/* ================= VIDEO UPLOAD ================= */}
-                    <input
-                      className="card input"
-                      type="file"
-                      accept="video/*"
-                      onChange={(e) => setVideoFile(e.target.files[0])}
-                    />
-
-                    <button
-                      onClick={() => {
-                        const fd = new FormData();
-                        fd.append("video", videoFile);
-                        fd.append("lecture_id", l.id);
-
-                        fetch(
-                          "http://localhost:3030/instructor/lecture/video",
-                          {
+                      <div className="upload-section" style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                        <input
+                          type="file"
+                          accept="video/*"
+                          onChange={(e) => setVideoFile(e.target.files[0])}
+                        />
+                        <button className="upload-btn" onClick={() => {
+                          const fd = new FormData();
+                          fd.append("video", videoFile);
+                          fd.append("lecture_id", l.id);
+                          fetch("http://localhost:3030/instructor/lecture/video", {
                             method: "POST",
-                            headers: {
-                              Authorization: token,
-                            },
+                            headers: { Authorization: token },
                             body: fd,
-                          }
-                        ).then(() => {
-                          authFetch(
-                            `http://localhost:3030/instructor/lectures/${selectedCourse}`
-                          ).then(setLectures);
-                        });
-                      }}
-                    >
-                      Upload Video
-                    </button>
-                  </>
-                )}
+                          }).then(() => {
+                            authFetch(`http://localhost:3030/instructor/lectures/${selectedCourse}`).then(setLectures);
+                          });
+                        }}>
+                          <Upload size={14} /> {l.video_url ? "Update Video" : "Upload Video"}
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <div className="add-lecture">
+              <h3><Plus size={18} /> Add New Lecture</h3>
+              <div className="form-row">
+                <input
+                  placeholder="Lecture Title (e.g. Introduction)"
+                  value={lectureTitle}
+                  onChange={(e) => setLectureTitle(e.target.value)}
+                />
+                <input
+                  placeholder="Sequence Order"
+                  type="number"
+                  value={lectureOrder}
+                  onChange={(e) => setLectureOrder(e.target.value)}
+                />
+                <button className="btn-save"
+                  disabled={!selectedCourse}
+                  onClick={() =>
+                    fetch("http://localhost:3030/instructor/lecture", {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                        Authorization: token,
+                      },
+                      body: JSON.stringify({
+                        course_id: selectedCourse,
+                        title: lectureTitle,
+                        order: lectureOrder,
+                      }),
+                    }).then(() => {
+                      setLectureTitle("");
+                      setLectureOrder("");
+                      authFetch(`http://localhost:3030/instructor/lectures/${selectedCourse}`).then(setLectures);
+                    })
+                  }
+                >
+                  Add
+                </button>
               </div>
-            ))}
-
-            <hr />
-
-            {/* ================= ADD LECTURE ================= */}
-            <h3>Add Lecture</h3>
-
-            <input
-              placeholder="Lecture Title"
-              value={lectureTitle}
-              onChange={(e) => setLectureTitle(e.target.value)}
-            />
-
-            <input
-              placeholder="Order"
-              value={lectureOrder}
-              onChange={(e) => setLectureOrder(e.target.value)}
-            />
-
-            <button
-              disabled={!selectedCourse}
-              onClick={() =>
-                fetch("http://localhost:3030/instructor/lecture", {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                    Authorization: token,
-                  },
-                  body: JSON.stringify({
-                    course_id: selectedCourse,
-                    title: lectureTitle,
-                    order: lectureOrder,
-                  }),
-                }).then(() => {
-                  setLectureTitle("");
-                  setLectureOrder("");
-                  authFetch(
-                    `http://localhost:3030/instructor/lectures/${selectedCourse}`
-                  ).then(setLectures);
-                })
-              }
-            >
-              Add Lecture
-            </button>
+            </div>
           </div>
         )}
 
         {/* ========== STUDENTS ========== */}
         {active === "students" && (
           <div className="card">
-            <h3>Students</h3>
+            <h3><Users size={20} color="#6d5dfc" /> Student Roster</h3>
 
             <div className="student-table">
               <div className="student-header">
-                <span>Name</span>
+                <span>Student</span>
                 <span>Email</span>
-                <span>Courses</span>
-                <span>Score</span>
+                <span>Active Enrollments</span>
+                <span>Performance</span>
               </div>
+
+              {students.length === 0 && <div className="student-row" style={{ textAlign: 'center' }}>No students enrolled yet.</div>}
 
               {students.map((s, i) => (
                 <div key={i} className="student-row">
-                  <span>{s.name}</span>
-                  <span>{s.email}</span>
-                  <span>{s.course?.join(", ")}</span>
-                  <span className="score">{s.total_score}</span>
+                  <span style={{ fontWeight: 800 }}>{s.name}</span>
+                  <span style={{ opacity: 0.7 }}>{s.email}</span>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                    {s.course?.map(c => <span key={c} className="tag" style={{ border: 'none', background: '#f8fafc', fontSize: '11px' }}>{c}</span>)}
+                  </div>
+                  <span className="score">{s.total_score || 0} pts</span>
                 </div>
               ))}
             </div>

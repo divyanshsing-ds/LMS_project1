@@ -94,12 +94,15 @@ function LoginAndSignup() {
           </div>
 
           <img src="/peeking-boy.png" alt="welcome" className="side-img" />
-          <h1>LMS Portal</h1>
-          <p>
-            Learn. Teach. Track progress.
-            <br />
-            All in one platform.
-          </p>
+
+          <div className="branding-bottom">
+            <h1>LMS Portal</h1>
+            <p>
+              Learn. Teach. Track progress.
+              <br />
+              All in one platform.
+            </p>
+          </div>
         </div>
 
         {/* RIGHT PANEL */}
@@ -134,6 +137,7 @@ function LoginAndSignup() {
             {mode === "signup" && (
               <div className="field">
                 <input
+                  placeholder=" "
                   value={full_name}
                   onChange={(e) => setfn(e.target.value)}
                   type="text"
@@ -145,6 +149,7 @@ function LoginAndSignup() {
 
             <div className="field">
               <input
+                placeholder=" "
                 value={Email}
                 onChange={(e) => sete(e.target.value)}
                 type="email"
@@ -156,6 +161,7 @@ function LoginAndSignup() {
             {mode === "signup" && (
               <div className="field">
                 <input
+                  placeholder=" "
                   value={mobile}
                   onChange={(e) => setMobile(e.target.value)} // ✅ FIX
                   type="number"
@@ -167,6 +173,7 @@ function LoginAndSignup() {
 
             <div className="field">
               <input
+                placeholder=" "
                 value={pass}
                 onChange={(e) => setpass(e.target.value)}
                 type="password"

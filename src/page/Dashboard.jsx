@@ -166,7 +166,15 @@ function Dashboard() {
       </div>
 
       {/* ================= COURSES ================= */}
-      <h3 className="section-title">Your Courses</h3>
+      <div className="courses-header">
+        <h3 className="section-title">Your Courses</h3>
+        <button
+          className="btn-premium add-more-btn"
+          onClick={() => navigate("/category", { state: { addMore: true } })}
+        >
+          + Add More Courses
+        </button>
+      </div>
 
       <div className="course-grid">
         {data.courses?.map((course) => (

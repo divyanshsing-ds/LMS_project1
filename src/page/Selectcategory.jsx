@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "../styles/Selectcategory.css";
 
 function Selectcategory() {
   const navigate = useNavigate();
+  const location = useLocation();
   const token = localStorage.getItem("user-token");
 
   const [categories, setCategories] = useState([]);
@@ -29,6 +30,10 @@ function Selectcategory() {
 
     // STUDENT FLOW
     if (role === "student") {
+      if (location.state?.addMore) {
+        setLoading(false);
+        return;
+      }
       fetch("http://localhost:3030/student-status", {
         headers: { Authorization: token },
       })
@@ -65,7 +70,11 @@ function Selectcategory() {
     if (!loading) {
       fetch("http://localhost:3030/categories")
         .then((res) => res.json())
-        .then((data) => setCategories(data));
+        .then((data) => {
+          // Filter out any broken categories that might have null/empty names or photos
+          const filtered = data.filter((c) => c && c.category && c.photo);
+          setCategories(filtered);
+        });
     }
   }, [loading]);
 
@@ -126,9 +135,8 @@ function Selectcategory() {
         {categories.map((c) => (
           <div
             key={c.category}
-            className={`category-box ${
-              selected.includes(c.category) ? "active" : ""
-            }`}
+            className={`category-box ${selected.includes(c.category) ? "active" : ""
+              }`}
             onClick={() => toggleCategory(c.category)}
           >
             <img src={c.photo} alt={c.category} />
